@@ -7,18 +7,19 @@ function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState('');
   const [unit, setUnit] = useState('metric');
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   const convertTemperature = (temp, unit) => {
     if (unit === 'imperial') {
-      return (temp * 9) / 5 + 32; 
+      return (temp * 9) / 5 + 32;
     }
-    return temp; 
+    return temp;
   };
 
   const fetchWeather = async () => {
     setError('');
-    setLoading(true); 
+    setWeatherData(null); // Clear previous data before fetching new data
+    setLoading(true);
     try {
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather`,
@@ -33,8 +34,9 @@ function App() {
       setWeatherData(response.data);
     } catch (err) {
       setError('Could not fetch weather data. Please try a valid city name.');
+      setWeatherData(null); // Ensure data is cleared in case of an error
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -46,7 +48,7 @@ function App() {
     <div className="min-h-screen bg-blue-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
         <h2 className="text-2xl font-bold mb-4">Weather Application</h2>
-        
+
         <div className="mb-4">
           <input
             type="text"
@@ -83,7 +85,7 @@ function App() {
           <div className="mt-4">
             <h3 className="text-xl font-bold">{weatherData.name}</h3>
             <p>
-              Temperature: {convertTemperature(weatherData.main.temp, unit)}° 
+              Temperature: {convertTemperature(weatherData.main.temp, unit)}°
               {unit === 'metric' ? 'C' : 'F'}
             </p>
             <p>Weather: {weatherData.weather[0].description}</p>
